@@ -1,6 +1,9 @@
 package bj
 
 
+/**
+ *  return a random number between 1 and 52 inclusive
+ */
 expect fun rng52():Int
 
 class Deck(shuffle: Boolean = true) {
