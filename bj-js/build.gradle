@@ -1,0 +1,42 @@
+plugins {
+    id 'kotlin-platform-js' version '1.2.51'
+}
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-js"
+    compile "org.jetbrains.kotlinx:kotlinx-html-js:0.6.3"
+    compile "org.jetbrains.kotlinx:kotlinx-html-js:0.6.3"
+    expectedBy project(":bj-common")
+    testCompile "org.jetbrains.kotlin:kotlin-test-js"
+
+}
+
+
+task assembleJs(type: Sync) {
+    configurations.compile.each { File file ->
+        from(zipTree(file.absolutePath), {
+            includeEmptyDirs = false
+            include { fileTreeElement ->
+                def path = fileTreeElement.path
+                path.endsWith(".js") && (path.startsWith("META-INF/resources/") ||
+                        !path.startsWith("META-INF/"))
+            }
+        })
+    }
+    from compileKotlin2Js.destinationDir
+    into "${projectDir}/build/web/js/"
+
+    dependsOn classes
+}
+
+task assembleHtml(type: Sync) {
+    from("${projectDir}/build/resources/main/")
+    into "${projectDir}/build/web/"
+    dependsOn classes
+}
+
+assemble.dependsOn assembleJs,assembleHtml
